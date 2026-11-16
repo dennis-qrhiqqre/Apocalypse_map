@@ -1,0 +1,93 @@
+{
+  "hard_test": {
+    "sha256": "5bf98c0c68ae6091edba5267d0d68174cb39593f95312fa40d0ed6a56757527c",
+    "editor_checks": "至少 4 個路口（目前 126）\n剛好一個撤離點\n所有路口都走得到\n起始感染 6 處\n路口 126 個\n工廠離撤離點的走路距離中位數 120",
+    "editor_export_revalidated": true,
+    "unity_version": "6000.6.7f1",
+    "unity_custom_loaded": true,
+    "players": 12,
+    "fuel_probes": [
+      {
+        "time": 240,
+        "candidate_count": 39,
+        "actual_origins": [
+          58,
+          49,
+          99,
+          11,
+          42,
+          42,
+          53,
+          5,
+          49,
+          11,
+          97,
+          69,
+          46
+        ],
+        "max_distance": 67.08
+      },
+      {
+        "time": 350,
+        "candidate_count": 29,
+        "actual_origins": [
+          57,
+          46,
+          98,
+          10,
+          40,
+          40,
+          48,
+          5,
+          46,
+          10,
+          68,
+          67,
+          42
+        ],
+        "max_distance": 58.05
+      },
+      {
+        "time": 450,
+        "candidate_count": 4,
+        "actual_origins": [
+          46,
+          27,
+          58,
+          2,
+          27,
+          27,
+          46,
+          2,
+          46,
+          2,
+          58,
+          58,
+          27
+        ],
+        "max_distance": 43.71
+      },
+      {
+        "time": 540,
+        "candidate_count": 2,
+        "actual_origins": [
+          45,
+          1,
+          45,
+          1,
+          1,
+          1,
+          45,
+          1,
+          45,
+          1,
+          45,
+          45,
+          1
+        ],
+        "max_distance": 6.71
+      }
+    ],
+    "scope": "load/start only; not a completed match"
+  }
+}

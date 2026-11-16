@@ -1,41 +1,59 @@
-# Apocalypse_map
+# 《末日大逃殺》自訂地圖
 
-《末日大逃殺》的六張合作撤離地圖，分為簡單、中等和困難三種難度。每張地圖都有不同的街區、運補路線和感染風險，適合用來練習修復發電機、運送零件、救援與撤離。
+三張可匯入現有地圖編輯器的定稿地圖，需搭配支援自訂地圖的《末日大逃殺》遊戲版本使用。
 
-![六張地圖總覽](previews/ALL_MAPS.png)
-
-## 地圖
-
-| 難度 | 地圖 | 特色 |
+| 難度 | 地圖 | 定稿來源 |
 |---|---|---|
-| 簡單 | [新手小鎮](maps/E1_town.json)・[預覽](previews/E1_town.png) | 中央廣場與放射道路，適合熟悉基本運輸和救援。 |
-| 簡單 | [月牙河灣](maps/E2_river_town.json)・[預覽](previews/E2_river_town.png) | C 形河灣、半島和三座橋，練習跨河運輸。 |
-| 中等 | [雙城運補](maps/M1_dual_city.json)・[預覽](previews/M1_dual_city.png) | 蛇行河道分隔老城與工業區，需要跨岸分工。 |
-| 中等 | [環狀廢墟](maps/M2_ruins.json)・[預覽](previews/M2_ruins.png) | 外環與感染區內的中央捷徑，考驗風險和繞路取捨。 |
-| 困難 | [橋樑危機](maps/H1_bridge_crisis.json)・[預覽](previews/H1_bridge_crisis.png) | S 形河谷隔開主要資源與撤離點；主橋封鎖時須繞往遠端備橋。 |
-| 困難 | [末日封鎖線](maps/H2_final_escape.json)・[預覽](previews/H2_final_escape.png) | 複雜河灣、半島與遠端工業區，需要更仔細的路線規劃與醫療管理。 |
+| Easy | [easy.json](maps/easy.json) | `easy_candidate_v2.json` |
+| Medium | [medium.json](maps/medium.json) | 專案中的 Medium |
+| Hard | [hard.json](maps/hard.json) | 手改 V3，河道經平滑調整 |
 
-預覽中的金線與青線分別顯示範例運補路線及指定道路封鎖後的替代路線；紅圈表示初始感染點。
+## 安裝及切換
 
-## 安裝與切換
+將 `maps/` 的三個 JSON 複製到遊戲的 `Apocalypse_Data/StreamingAssets/maps/`；Unity 專案則放在 `game/unity/Assets/StreamingAssets/maps/`。啟動時可選擇：
 
-本儲存庫提供地圖資料，需要搭配**支援自訂地圖**的《末日大逃殺》版本使用。
+```powershell
+.\Apocalypse.exe -map easy.json
+.\Apocalypse.exe -map medium.json
+.\Apocalypse.exe -map hard.json
+```
 
-1. 下載本儲存庫，將 `maps/` 中需要的 JSON 複製到遊戲的 `Apocalypse_Data/StreamingAssets/maps/`。若使用 Unity 專案，複製到 `game/unity/Assets/StreamingAssets/maps/`。
-2. 啟動遊戲時使用 `-map` 指定地圖，例如：
+或在 `StreamingAssets/config.json` 設定 `"mapFile": "medium.json"`。遊戲找不到檔案或驗證失敗時可能回退至隨機地圖；請查看遊戲日誌確認實際載入的地圖。亦可透過專案內 `game/editor/map_editor.html` 匯入 JSON。
 
-   ```powershell
-   .\Apocalypse.exe -map E1_town.json
-   ```
+## Bot 測試結果
 
-   將檔名換成其他地圖即可切換；也可以傳入 JSON 的完整路徑。
+每組使用 12 人、相同 20 個種子 `1001–1020`。表格列成功起飛場數；結果來自 SDK 本機模擬，並非真人遊玩：
 
-3. 或在遊戲的 `StreamingAssets/config.json` 中設定，例如 `"mapFile": "E1_town.json"`。
+| 地圖 | 12 個 Starter | 11 種 Bot + Starter，關閉 OR-Tools | 相同隊伍，開啟 OR-Tools |
+|---|---:|---:|---:|
+| Easy V2 | 13/20 | 20/20 | 20/20 |
+| Medium | 9/20 | 18/20 | 20/20 |
+| Hard V3，平滑河道前 | 7/20 | 1/20 | 19/20 |
 
-遊戲找不到地圖或地圖驗證失敗時會回退為隨機地圖；請查看遊戲日誌，確認出現「使用自訂地圖」訊息。部分較舊的建置不支援 `-map`。
+Easy 的 Starter 有 6 場團滅、1 場修理超時；Medium 的 Starter 9/20 起飛；Hard 的 Starter 有 13 場團滅，關閉求解器有 19 場修理超時。統計包含失敗局；完成時間只統計實際完成該階段的局數。每種地圖的逐場結果在 [`tests/`](tests/)。
 
-## 驗證與測試
+**Hard 版本差異：**上表及 [Hard 測試](tests/hard/REPORT.md)使用[河道平滑前的 V3 快照](tests/hard/tested_before_river_smoothing.json)。定稿 `hard.json` 只修改河流控制點，節點、道路、設施與其餘資料不變；定稿已通過編輯器、Unity 載入與幾何檢查，但尚未重跑完整 Bot 對局。兩個檔案雜湊不同，請勿把測試結果當成定稿實測。
 
-六張地圖曾使用 Unity 的 `CityMap.Validate()` 和自訂地圖載入流程檢查，並檢查道路、橋樑、供電分區及替代路線。每張地圖也以相同八人設定在 SDK 本機模擬器執行五個種子：E1、E2、M1、M2、H1 均為 5/5 場有人撤離，H2 為 4/5。
+SDK 在 Python 策略運算時會暫停模擬，並把實測規劃時間加 0.15 秒作為計畫提交延遲；不是正常 1 倍速。另以 Unity C# 牆鐘 1 倍速、種子 2001 各測一場：Easy 的 Starter 失敗、關閉與開啟組分別撤離 11、12 人；Medium 分別為失敗、11 人、12 人；Hard 平滑前 V3 分別為失敗、失敗、10 人。每組只有一場，不能用來估計長期勝率；原始紀錄在 [`tests/unity_1x/`](tests/unity_1x/)。真人操作與平衡仍需實際遊玩。
 
-模擬不保證所有策略或隨機種子都能通關；完整 3D 多人場次與真人平衡仍需實際遊玩測試。
+## 使用的 Bot 與原始碼
+
+- **Starter：**12 人均使用遊戲 SDK 的 [starter_bot.py](https://github.com/Neoxy-6/Apocalypse/blob/f4643792dafca59cfe567f82bba1af69f61d1546/game/unity/Assets/StreamingAssets/sdk/starter_bot.py)。
+- **開啟 OR-Tools：**下列 11 個新版 Bot 各一名，加一名 Starter；使用真正的 OR-Tools CP-SAT、Routing 或混合求解。
+- **關閉 OR-Tools：**同一組 11 個 Bot 加一名 Starter；僅在測試程序中將 `solve_cp()` 與 `solve_routing()` 替換成各 Bot 原有的 `seed_order()`，沒有修改 Bot 原始檔。不同隊伍與 Starter 的差異不能全部歸因於 OR-Tools。
+
+| Bot | 原始碼 |
+|---|---|
+| 套件架構師 | [bot_01_set_architect.py](https://github.com/YTolemop/Apocalypse_ai-bot/blob/5d8aae0900f233a1995b0340997e8bdefef78f18/bot_01_set_architect.py) |
+| 期限精算師 | [bot_02_deadline_accountant.py](https://github.com/YTolemop/Apocalypse_ai-bot/blob/5d8aae0900f233a1995b0340997e8bdefef78f18/bot_02_deadline_accountant.py) |
+| 產線統籌師 | [bot_03_flow_controller.py](https://github.com/YTolemop/Apocalypse_ai-bot/blob/5d8aae0900f233a1995b0340997e8bdefef78f18/bot_03_flow_controller.py) |
+| 救援配置師 | [bot_04_rescue_optimizer.py](https://github.com/YTolemop/Apocalypse_ai-bot/blob/5d8aae0900f233a1995b0340997e8bdefef78f18/bot_04_rescue_optimizer.py) |
+| 環線集運師 | [bot_05_milk_run.py](https://github.com/YTolemop/Apocalypse_ai-bot/blob/5d8aae0900f233a1995b0340997e8bdefef78f18/bot_05_milk_run.py) |
+| 加工接力師 | [bot_06_factory_courier.py](https://github.com/YTolemop/Apocalypse_ai-bot/blob/5d8aae0900f233a1995b0340997e8bdefef78f18/bot_06_factory_courier.py) |
+| 巡邏時窗師 | [bot_07_safe_window.py](https://github.com/YTolemop/Apocalypse_ai-bot/blob/5d8aae0900f233a1995b0340997e8bdefef78f18/bot_07_safe_window.py) |
+| 輕載速運師 | [bot_08_light_express.py](https://github.com/YTolemop/Apocalypse_ai-bot/blob/5d8aae0900f233a1995b0340997e8bdefef78f18/bot_08_light_express.py) |
+| 跨河套件師 | [bot_09_cross_river.py](https://github.com/YTolemop/Apocalypse_ai-bot/blob/5d8aae0900f233a1995b0340997e8bdefef78f18/bot_09_cross_river.py) |
+| 武裝調度師 | [bot_10_armed_scheduler.py](https://github.com/YTolemop/Apocalypse_ai-bot/blob/5d8aae0900f233a1995b0340997e8bdefef78f18/bot_10_armed_scheduler.py) |
+| 主線總調度 | [bot_11_mission_director.py](https://github.com/YTolemop/Apocalypse_ai-bot/blob/5d8aae0900f233a1995b0340997e8bdefef78f18/bot_11_mission_director.py) |
+
+上述連結固定到測試所用的版本，11 個 Bot 與 Starter 均已逐檔比對內容雜湊。它們需搭配遊戲的 `apocalypse_sdk.py` 與相容的 Python 環境；測試環境使用 OR-Tools `9.15.6755`。本倉庫地圖及測試檔的 SHA-256 見 [SHA256.json](SHA256.json)。
