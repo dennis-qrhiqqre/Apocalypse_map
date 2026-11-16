@@ -4,9 +4,9 @@
 
 | 難度 | 地圖 | 定稿來源 |
 |---|---|---|
-| Easy | [easy.json](maps/easy.json) | `easy_candidate_v2.json` |
-| Medium | [medium.json](maps/medium.json) | 專案中的 Medium |
-| Hard | [hard.json](maps/hard.json) | 手改 V3，河道經平滑調整 |
+| Easy | [easy.json](maps/easy.json) |
+| Medium | [medium.json](maps/medium.json) |
+| Hard | [hard.json](maps/hard.json) |
 
 ## 安裝及切換
 
@@ -32,7 +32,6 @@
 
 Easy 的 Starter 有 6 場團滅、1 場修理超時；Medium 的 Starter 9/20 起飛；Hard 的 Starter 有 13 場團滅，關閉求解器有 19 場修理超時。統計包含失敗局；完成時間只統計實際完成該階段的局數。每種地圖的逐場結果在 [`tests/`](tests/)。
 
-**Hard 版本差異：**上表及 [Hard 測試](tests/hard/REPORT.md)使用[河道平滑前的 V3 快照](tests/hard/tested_before_river_smoothing.json)。定稿 `hard.json` 只修改河流控制點，節點、道路、設施與其餘資料不變；定稿已通過編輯器、Unity 載入與幾何檢查，但尚未重跑完整 Bot 對局。兩個檔案雜湊不同，請勿把測試結果當成定稿實測。
 
 SDK 在 Python 策略運算時會暫停模擬，並把實測規劃時間加 0.15 秒作為計畫提交延遲；不是正常 1 倍速。另以 Unity C# 牆鐘 1 倍速、種子 2001 各測一場：Easy 的 Starter 失敗、關閉與開啟組分別撤離 11、12 人；Medium 分別為失敗、11 人、12 人；Hard 平滑前 V3 分別為失敗、失敗、10 人。每組只有一場，不能用來估計長期勝率；原始紀錄在 [`tests/unity_1x/`](tests/unity_1x/)。真人操作與平衡仍需實際遊玩。
 
